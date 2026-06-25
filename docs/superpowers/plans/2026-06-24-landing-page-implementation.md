@@ -979,7 +979,7 @@ below are shown in that file order (Components first, then Sections):
 
 .philosophy-item__meaning {
   font-size: 12px;
-  color: var(--color-divider);
+  color: var(--color-moss-text);
   text-transform: uppercase;
   letter-spacing: 0.08em;
   margin-top: var(--space-1);
