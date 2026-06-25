@@ -186,6 +186,29 @@ input:focus-visible {
   margin-top: var(--space-1);
 }
 
+.card {
+  background: var(--color-card);
+  border: 1px solid var(--color-divider);
+  border-top: 2px solid var(--color-sand);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity var(--duration-fade) var(--ease-default) var(--delay, 0ms),
+              transform var(--duration-fade) var(--ease-default) var(--delay, 0ms);
+}
+
+.card.is-visible { opacity: 1; transform: translateY(0); }
+
+.card__icon { font-size: 28px; display: block; margin-bottom: var(--space-2); }
+.card__icon--kanji { font-family: var(--font-kanji); }
+.card h3 { font-size: 18px; margin-bottom: var(--space-1); }
+.card p { font-size: 14px; color: var(--color-moss-text); margin: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .card { transition: none; }
+}
+
 /* ===== Sections ===== */
 .hero {
   position: relative;
@@ -324,6 +347,40 @@ input:focus-visible {
 
 @media (max-width: 768px) {
   .product__grid, .product__zones { grid-template-columns: 1fr; }
+}
+
+.features { padding: var(--space-8) var(--space-5); }
+
+.features__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-4);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.for {
+  background: var(--color-clouds);
+  color: var(--color-noir);
+  text-align: center;
+  padding: var(--space-8) var(--space-5);
+}
+
+.for h2 { color: var(--color-noir); }
+
+.for__personas {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-5);
+  max-width: 1000px;
+  margin: var(--space-6) auto 0;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 20px;
+}
+
+@media (max-width: 768px) {
+  .features__grid, .for__personas { grid-template-columns: 1fr; }
 }
 
 /* ===== Motion ===== */

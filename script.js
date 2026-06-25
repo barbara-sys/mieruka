@@ -69,7 +69,7 @@ export function shouldEnableCustomCursor(matchMediaFn = (q) => window.matchMedia
 }
 
 export function initRevealOnScroll(root = document) {
-  const elements = root.querySelectorAll('[data-reveal], .zone');
+  const elements = root.querySelectorAll('[data-reveal], .zone, .card');
   if (!('IntersectionObserver' in window) || elements.length === 0) {
     elements.forEach((el) => el.classList.add('is-visible'));
     return;
