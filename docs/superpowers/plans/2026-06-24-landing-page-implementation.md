@@ -4,13 +4,13 @@
 
 **Goal:** Build the production-ready, single-page mieruka.studio site exactly as specified in `docs/superpowers/specs/2026-06-24-landing-page-design.md`: a calm, editorial, typography-led brand page that frames the $24 workbook as "Release 01" of a software company, not an Etsy storefront — with tested design tokens, a loading animation, scroll-driven ambient lighting, a restrained custom cursor, and a multi-page-ready CSS architecture.
 
-**Architecture:** Three static files — `index.html`, `styles.css`, `script.js` (loaded as an ES module) — plus `assets/`. All non-trivial logic (contrast-ratio math, throttling, email validation, feature-detection for the cursor) is extracted into small pure functions exported from `script.js` and unit-tested with Node's built-in test runner (`node --test`, no dependencies, `.mjs` test files so no `package.json` is needed — this avoids Vercel mistaking the project for a Node app). DOM wiring (scroll listeners, IntersectionObserver, cursor follower) lives in a `document`-gated block at the bottom of `script.js` and is verified manually in-browser per task, since there is no browser-test runner in scope.
+**Architecture:** Three static files — `index.html`, `styles.css`, `script.js` (loaded as an ES module) — plus `assets/`. All non-trivial logic (contrast-ratio math, throttling, email validation, feature-detection for the cursor) is extracted into small pure functions exported from `script.js` and unit-tested with Node's built-in test runner (`node --test`, no external dependencies). A minimal `package.json` (`{"name": "mieruka-studio", "private": true, "type": "module", "scripts": {"test": "node --test tests/"}}`) is required so Node resolves `script.js` as an ES module when the test files `import` from it — `.mjs` test-file extensions alone are not sufficient, since Node resolves the imported file's own module type independently. This `package.json` has no `build` script and no dependencies, so it does not trigger Vercel's build-detection or interfere with Netlify drag-and-drop deploy — both still serve the project as a static site. DOM wiring (scroll listeners, IntersectionObserver, cursor follower) lives in a `document`-gated block at the bottom of `script.js` and is verified manually in-browser per task, since there is no browser-test runner in scope.
 
 **Tech Stack:** Vanilla HTML5, CSS3 (custom properties), vanilla JS (ES modules), Node.js built-in test runner (dev-only, not deployed), Google Fonts (Cormorant Garamond, Jost, Noto Serif JP).
 
 ## Global Constraints
 
-- No build step, no bundler, no JS/CSS frameworks or libraries — only the three files (`index.html`, `styles.css`, `script.js`) plus `assets/` are deployed.
+- No build step, no bundler, no JS/CSS frameworks or libraries — only the three files (`index.html`, `styles.css`, `script.js`) plus `assets/` are deployed. A `package.json` exists at the repo root for test-runner module resolution only (`{"private": true, "type": "module", "scripts": {"test": "..."}}`, no `build` script, no dependencies) — it does not trigger Vercel build-detection and is irrelevant to Netlify drag-and-drop, which only reads the deployed folder's static files.
 - `script.js` is loaded via `<script type="module" src="script.js">` so it can use `export`.
 - Color tokens (exact): `--color-noir:#181614; --color-moss:#8B7B6A; --color-moss-text:#A89A87; --color-sand:#C8BA9E; --color-clouds:#EDE8DF; --color-divider:#2E2B28; --color-card:#1E1C1A;`
 - Font tokens: `--font-display: 'Cormorant Garamond', serif; --font-body: 'Jost', sans-serif; --font-kanji: 'Noto Serif JP', serif;` all loaded from Google Fonts with `<link rel="preconnect">` and `font-display: swap`.
@@ -35,6 +35,7 @@ mieruka.studio/
 ├── index.html
 ├── styles.css
 ├── script.js
+├── package.json          (private, type: module, no build script — test-runner config only)
 ├── assets/
 │   └── favicon.svg
 ├── tests/
