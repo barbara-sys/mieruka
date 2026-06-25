@@ -68,4 +68,25 @@ export function shouldEnableCustomCursor(matchMediaFn = (q) => window.matchMedia
   return isFinePointer && isWideViewport && !reducedMotion;
 }
 
-// ===== DOM wiring (added in later tasks) =====
+// ===== DOM wiring (manual verification only — see plan Task 4 Step 5) =====
+if (typeof document !== 'undefined') {
+  const nav = document.querySelector('[data-nav]');
+  if (nav) {
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('nav--solid', window.scrollY > 80);
+    }, { passive: true });
+  }
+
+  const loader = document.querySelector('[data-loader]');
+  if (loader) {
+    const dismissLoader = () => {
+      loader.classList.add('loader--hidden');
+      setTimeout(() => loader.remove(), 400);
+    };
+    if (prefersReducedMotion()) {
+      dismissLoader();
+    } else {
+      window.addEventListener('load', () => setTimeout(dismissLoader, 700));
+    }
+  }
+}
