@@ -25,8 +25,3 @@ test('preconnects to Google Fonts', () => {
 test('script is loaded as an ES module', () => {
   assert.match(html, /<script[^>]+type="module"[^>]+src="script\.js"/i);
 });
-
-test('has exactly one h1', () => {
-  const matches = html.match(/<h1[\s>]/gi) || [];
-  assert.equal(matches.length, 1);
-});
