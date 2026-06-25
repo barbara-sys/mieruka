@@ -752,69 +752,15 @@ git commit -m "Add nav scroll-solidify behavior and loading animation"
 
 - [ ] **Step 2: Style hero and the shared button component**
 
+The file's section headers are already in place (from Task 1) in the order
+`Tokens, Base, Layout, Components, Sections, Motion, Utilities`. Insert the
+`.btn`/`.btn--primary` rules under the EXISTING `Components` header, and the
+hero rules under the EXISTING `Sections` header — do not reorder or
+duplicate the headers themselves. The two blocks below are shown in that
+file order (Components first, then Sections) so you can paste each under
+its matching existing header:
+
 ```css
-/* ===== Sections ===== */
-.hero {
-  position: relative;
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  padding: var(--space-5);
-}
-
-.watermark {
-  position: absolute;
-  font-family: var(--font-kanji);
-  color: var(--color-sand);
-  opacity: 0.04;
-  pointer-events: none;
-  user-select: none;
-}
-
-.watermark--hero {
-  font-size: 600px;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-
-.hero__content {
-  position: relative;
-  max-width: 640px;
-  text-align: center;
-  opacity: 0;
-  transform: translateY(20px);
-  animation: hero-rise var(--duration-fade) var(--ease-default) forwards;
-  animation-delay: 0.9s;
-}
-
-.hero__headline {
-  font-size: 72px;
-  font-style: italic;
-  line-height: 1.15;
-}
-
-.hero__subtext {
-  margin-top: var(--space-4);
-  color: var(--color-moss-text);
-  font-size: 16px;
-}
-
-@keyframes hero-rise {
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .hero__content { animation: none; opacity: 1; transform: none; }
-}
-
-@media (max-width: 768px) {
-  .hero__headline { font-size: 40px; }
-  .watermark--hero { font-size: 320px; }
-}
-
 /* ===== Components ===== */
 .btn {
   display: inline-block;
@@ -850,6 +796,75 @@ git commit -m "Add nav scroll-solidify behavior and loading animation"
   .btn--primary:active { transform: none; }
 }
 ```
+
+```css
+/* ===== Sections ===== */
+.hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: var(--space-5);
+}
+
+.watermark {
+  position: absolute;
+  font-family: var(--font-kanji);
+  color: var(--color-sand);
+  opacity: 0.04;
+  pointer-events: none;
+  user-select: none;
+}
+
+.watermark--hero {
+  font-size: 600px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.hero__content {
+  position: relative;
+  max-width: 640px;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: hero-rise var(--duration-fade) var(--ease-default) forwards;
+  animation-delay: var(--duration-fade);
+}
+
+.hero__headline {
+  font-size: 72px;
+  font-style: italic;
+  line-height: 1.15;
+}
+
+.hero__subtext {
+  margin-top: var(--space-4);
+  color: var(--color-moss-text);
+  font-size: 16px;
+}
+
+@keyframes hero-rise {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__content { animation: none; opacity: 1; transform: none; }
+}
+
+@media (max-width: 768px) {
+  .hero__headline { font-size: 40px; }
+  .watermark--hero { font-size: 320px; }
+}
+```
+
+Note: `animation-delay` uses `var(--duration-fade)` (0.9s) rather than a
+hardcoded `0.9s` literal, per the global motion-token constraint — the
+delay happens to equal the fade duration here, which is coincidental, not a
+reason to hardcode it.
 
 - [ ] **Step 3: Append the deferred h1 test to `tests/seo.test.mjs`**
 
