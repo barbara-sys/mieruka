@@ -643,13 +643,13 @@ git commit -m "Add tested pure utility functions: contrast ratio, throttleRAF, e
   font-size: 96px;
   color: var(--color-sand);
   opacity: 1;
-  transition: opacity 0.4s var(--ease-default);
+  transition: opacity var(--duration-fade) var(--ease-default);
 }
 
 .loader__mark {
   opacity: 0;
   transform: scale(0.85);
-  animation: loader-reveal 0.7s var(--ease-default) forwards;
+  animation: loader-reveal var(--duration-fade) var(--ease-default) forwards;
 }
 
 .loader--hidden {
@@ -662,10 +662,18 @@ git commit -m "Add tested pure utility functions: contrast ratio, throttleRAF, e
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .nav { transition: none; }
   .loader { display: none; }
   .loader__mark { animation: none; opacity: 1; transform: none; }
 }
 ```
+
+Note: this uses `--duration-fade` (0.9s) for both the loader's reveal and
+fade-out, per the global constraint that all transitions/animations use
+motion tokens, not hardcoded values. The reduced-motion block also
+neutralizes `.nav`'s background/border transition (added in Step 2), since
+that is a real scroll-triggered transition the global constraint requires
+covering.
 
 - [ ] **Step 3: Add the loader's kanji mark to `index.html`**
 
@@ -691,12 +699,12 @@ if (typeof document !== 'undefined') {
   if (loader) {
     const dismissLoader = () => {
       loader.classList.add('loader--hidden');
-      setTimeout(() => loader.remove(), 400);
+      setTimeout(() => loader.remove(), 900); // matches --duration-fade (0.9s)
     };
     if (prefersReducedMotion()) {
       dismissLoader();
     } else {
-      window.addEventListener('load', () => setTimeout(dismissLoader, 700));
+      window.addEventListener('load', () => setTimeout(dismissLoader, 900)); // matches --duration-fade (0.9s)
     }
   }
 }
@@ -704,7 +712,7 @@ if (typeof document !== 'undefined') {
 
 - [ ] **Step 5: Manually verify in-browser**
 
-Open `index.html`. Confirm: loader shows the kanji 見 fading/scaling in, then the whole overlay fades out after ~0.7s revealing the page underneath. Scroll down past 80px — nav background becomes solid Noir with a visible bottom divider; scroll back up — it returns to transparent. In Chrome DevTools, set Rendering → "Emulate CSS prefers-reduced-motion: reduce", reload — loader should not render at all (instant content).
+Open `index.html`. Confirm: loader shows the kanji 見 fading/scaling in, then the whole overlay fades out after ~0.9s revealing the page underneath. Scroll down past 80px — nav background becomes solid Noir with a visible bottom divider; scroll back up — it returns to transparent. In Chrome DevTools, set Rendering → "Emulate CSS prefers-reduced-motion: reduce", reload — loader should not render at all (instant content), and confirm the nav's background swap on scroll is now instant (no fade) by checking the Elements panel's computed `transition` value on `.nav` is `none`.
 
 - [ ] **Step 6: Commit**
 
