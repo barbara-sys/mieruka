@@ -383,6 +383,42 @@ input:focus-visible {
   .features__grid, .for__personas { grid-template-columns: 1fr; }
 }
 
+.buy {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding: var(--space-8) var(--space-5);
+  overflow: hidden;
+}
+
+.watermark--buy {
+  font-size: 480px;
+  opacity: 0.05;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.buy__label {
+  color: var(--color-sand);
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.buy__price {
+  font-family: var(--font-display);
+  font-size: 56px;
+  color: var(--color-clouds);
+  margin: var(--space-3) 0;
+}
+
+.buy__fine-print {
+  margin-top: var(--space-3);
+  font-size: 13px;
+  color: var(--color-moss-text);
+}
+
 /* ===== Motion ===== */
 .loader {
   position: fixed;
@@ -419,4 +455,20 @@ input:focus-visible {
   .loader { display: none; }
   .loader__mark { animation: none; opacity: 1; transform: none; }
 }
+
+.ambient-glow {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at 50% var(--scroll-glow-y, 0%),
+    rgba(200, 186, 158, 0.03),
+    transparent 60%
+  );
+}
+
 /* ===== Utilities ===== */

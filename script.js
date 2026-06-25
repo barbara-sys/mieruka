@@ -108,4 +108,17 @@ if (typeof document !== 'undefined') {
   }
 
   initRevealOnScroll();
+
+  const glow = document.querySelector('[data-ambient-glow]');
+  if (glow && !prefersReducedMotion()) {
+    const updateGlow = throttleRAF(() => {
+      const scrollFraction = clamp(
+        window.scrollY / (document.documentElement.scrollHeight - window.innerHeight),
+        0,
+        1
+      );
+      glow.style.setProperty('--scroll-glow-y', `${scrollFraction * 100}%`);
+    });
+    window.addEventListener('scroll', updateGlow, { passive: true });
+  }
 }
