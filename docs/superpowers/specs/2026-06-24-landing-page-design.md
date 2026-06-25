@@ -197,6 +197,60 @@ mieruka.studio/
 - Single `<h1>`, logical heading order, semantic landmarks (`<nav>`,
   `<main>`, `<footer>`).
 
+## Premium polish additions (round 2)
+
+Added after initial spec approval, in response to a request to treat this as
+the foundation of a scalable brand rather than a one-off landing page.
+
+- **Loading animation.** On first paint, a brief full-screen overlay
+  (`--color-noir` bg) shows the kanji 見 fading/scaling in centered, ~600–800ms,
+  then fades out to reveal the hero (which runs its existing fade+rise).
+  Implemented as a `.loader` element toggled by JS; pure CSS keyframes.
+  Skipped entirely (no overlay, instant content) under
+  `prefers-reduced-motion: reduce`.
+
+- **Ambient lighting on scroll.** A large soft radial-gradient glow layer,
+  fixed behind content (`position: fixed`, `z-index` below content,
+  `pointer-events: none`). Its vertical offset is driven by a single CSS
+  custom property (`--scroll-glow-y`) updated via a `requestAnimationFrame`-
+  throttled, passive scroll listener — one listener for the whole page, only
+  a `transform` is touched (GPU-accelerated, no layout/repaint cost). Under
+  `prefers-reduced-motion: reduce`, the glow renders once, statically, with
+  no scroll-driven movement.
+
+- **Custom cursor (desktop only, restrained).** Rather than replacing the OS
+  cursor (which hurts accessibility — loses native text-input/resize
+  affordances), implement a soft blurred "glow follower" dot that trails the
+  real pointer with slight lag, rendered above content. The system cursor
+  stays visible at all times. Scoped to
+  `@media (pointer: fine) and (min-width: 1024px)`; fully disabled on touch
+  devices and under `prefers-reduced-motion: reduce`. This is the version of
+  "premium cursor" that enhances feel without the usability risk of hiding
+  the native cursor.
+
+- **Tactile buttons.** In addition to the existing hover state (Sand
+  lightens, `scale(1.02)`), add an `:active` press state (`scale(0.97)`,
+  faster transition than the hover state) so clicks/taps feel like a
+  physical press, not just a hover swap.
+
+- **Footer brand detail.** Add a small line — "Built with Japanese
+  philosophy" — between the tagline and the copyright line, set in Sand at a
+  reduced size, reinforcing brand story without competing with the tagline.
+
+- **Scalable design system / multi-page readiness.** All design tokens
+  (color, typography, spacing, motion) live in one clearly commented `:root`
+  block at the top of `styles.css`, intended to be lifted unchanged into a
+  shared stylesheet when a second page is added. Components are styled by
+  class, never by ID, so they can be copied into future pages with no
+  rework. `styles.css` is internally organized into labeled sections
+  (Tokens → Base → Layout → Components → Sections → Motion → Utilities) to
+  keep it navigable as it grows. This pattern is documented in the README as
+  the convention future pages should follow.
+
+- **Production-readiness.** Confirmed already covered by the existing
+  Technical Architecture section (semantic HTML, CSS variables, no build
+  step, no frameworks). No changes needed beyond the organization above.
+
 ## Open items for before public launch (not blocking implementation)
 
 - Replace Etsy placeholder URL (`https://etsy.com`) with the real listing.
