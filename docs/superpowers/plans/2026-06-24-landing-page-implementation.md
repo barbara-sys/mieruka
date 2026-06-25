@@ -1310,6 +1310,25 @@ existing header order (Sections before Motion). Shown below in that order:
 }
 ```
 
+```css
+/* ===== Motion ===== */
+.ambient-glow {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at 50% var(--scroll-glow-y, 50%),
+    rgba(200, 186, 158, 0.06),
+    transparent 60%
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ambient-glow { background: radial-gradient(circle at 50% 50%, rgba(200, 186, 158, 0.06), transparent 60%); }
+}
+```
+
 - [ ] **Step 3: Wire the scroll-driven glow in `script.js`**
 
 ```js
