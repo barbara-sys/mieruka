@@ -68,6 +68,23 @@ export function shouldEnableCustomCursor(matchMediaFn = (q) => window.matchMedia
   return isFinePointer && isWideViewport && !reducedMotion;
 }
 
+export function initRevealOnScroll(root = document) {
+  const elements = root.querySelectorAll('[data-reveal], .zone');
+  if (!('IntersectionObserver' in window) || elements.length === 0) {
+    elements.forEach((el) => el.classList.add('is-visible'));
+    return;
+  }
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.2 });
+  elements.forEach((el) => observer.observe(el));
+}
+
 // ===== DOM wiring (manual verification only — see plan Task 4 Step 5) =====
 if (typeof document !== 'undefined') {
   const nav = document.querySelector('[data-nav]');
@@ -89,4 +106,6 @@ if (typeof document !== 'undefined') {
       window.addEventListener('load', () => setTimeout(dismissLoader, 900)); // matches --duration-fade (0.9s)
     }
   }
+
+  initRevealOnScroll();
 }
