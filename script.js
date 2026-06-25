@@ -81,12 +81,12 @@ if (typeof document !== 'undefined') {
   if (loader) {
     const dismissLoader = () => {
       loader.classList.add('loader--hidden');
-      setTimeout(() => loader.remove(), 400);
+      setTimeout(() => loader.remove(), 900); // matches --duration-fade (0.9s)
     };
     if (prefersReducedMotion()) {
       dismissLoader();
     } else {
-      window.addEventListener('load', () => setTimeout(dismissLoader, 700));
+      window.addEventListener('load', () => setTimeout(dismissLoader, 900)); // matches --duration-fade (0.9s)
     }
   }
 }

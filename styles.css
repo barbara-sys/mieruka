@@ -134,13 +134,13 @@ input:focus-visible {
   font-size: 96px;
   color: var(--color-sand);
   opacity: 1;
-  transition: opacity 0.4s var(--ease-default);
+  transition: opacity var(--duration-fade) var(--ease-default);
 }
 
 .loader__mark {
   opacity: 0;
   transform: scale(0.85);
-  animation: loader-reveal 0.7s var(--ease-default) forwards;
+  animation: loader-reveal var(--duration-fade) var(--ease-default) forwards;
 }
 
 .loader--hidden {
@@ -153,6 +153,7 @@ input:focus-visible {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .nav { transition: none; }
   .loader { display: none; }
   .loader__mark { animation: none; opacity: 1; transform: none; }
 }
