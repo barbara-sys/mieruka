@@ -92,12 +92,12 @@ test('preconnects to Google Fonts', () => {
 test('script is loaded as an ES module', () => {
   assert.match(html, /<script[^>]+type="module"[^>]+src="script\.js"/i);
 });
-
-test('has exactly one h1', () => {
-  const matches = html.match(/<h1[\s>]/gi) || [];
-  assert.equal(matches.length, 1);
-});
 ```
+
+Note: the "exactly one h1" check is intentionally NOT part of this test file
+yet — no section has an `<h1>` until Task 5 adds the hero headline. Task 5
+appends that assertion to this same file once the h1 exists. Adding it here
+would make this task's own test fail against its own deliverable.
 
 - [ ] **Step 2: Run the test to verify it fails**
 
@@ -158,7 +158,7 @@ Expected: FAIL — `index.html` does not exist yet (ENOENT).
 - [ ] **Step 4: Run the test to verify it passes**
 
 Run: `node --test tests/seo.test.mjs`
-Expected: PASS (6 tests)
+Expected: PASS (5 tests)
 
 - [ ] **Step 5: Create empty `styles.css` and `script.js`**
 
@@ -842,14 +842,32 @@ git commit -m "Add nav scroll-solidify behavior and loading animation"
 }
 ```
 
-- [ ] **Step 3: Manually verify in-browser**
+- [ ] **Step 3: Append the deferred h1 test to `tests/seo.test.mjs`**
+
+Task 1 deliberately left this assertion out because no `<h1>` existed yet.
+This task's hero markup adds the page's only `<h1>`, so the check belongs
+here. Append to the end of `tests/seo.test.mjs`:
+
+```js
+test('has exactly one h1', () => {
+  const matches = html.match(/<h1[\s>]/gi) || [];
+  assert.equal(matches.length, 1);
+});
+```
+
+- [ ] **Step 4: Run the full SEO test file to verify it passes**
+
+Run: `node --test tests/seo.test.mjs`
+Expected: PASS (6 tests)
+
+- [ ] **Step 5: Manually verify in-browser**
 
 Reload `index.html`. Confirm: hero fills the viewport, faint 見 watermark is centered behind the text, headline/subtext fade+rise in shortly after the loader clears, "Begin the practice →" button scrolls to the (currently empty) `#buy` anchor, button visibly lightens and scales up slightly on hover and presses down on click. Resize to a mobile width (<768px) — headline shrinks to 40px.
 
-- [ ] **Step 4: Commit**
+- [ ] **Step 6: Commit**
 
 ```bash
-git add index.html styles.css
+git add index.html styles.css tests/seo.test.mjs
 git commit -m "Add hero section with kanji watermark, fade-rise animation, and shared button component"
 ```
 
