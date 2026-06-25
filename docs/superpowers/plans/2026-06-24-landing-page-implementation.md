@@ -944,20 +944,14 @@ git commit -m "Add hero section with kanji watermark, fade-rise animation, and s
 
 - [ ] **Step 2: Style both sections**
 
-```css
-/* ===== Sections ===== */
-.philosophy__list {
-  display: flex;
-  justify-content: space-between;
-  list-style: none;
-  margin: 0;
-  padding: var(--space-6) var(--space-5);
-  border-top: 1px solid var(--color-sand);
-  border-bottom: 1px solid var(--color-divider);
-  overflow-x: auto;
-  gap: var(--space-4);
-}
+The file's section headers already exist (from Task 1), in the order
+`Tokens, Base, Layout, Components, Sections, Motion, Utilities`. Insert
+`.philosophy-item*` under the EXISTING `Components` header, and everything
+else (`.philosophy__list`, `.product*`, `.zone*`) under the EXISTING
+`Sections` header — do not reorder or duplicate the headers. The two blocks
+below are shown in that file order (Components first, then Sections):
 
+```css
 /* ===== Components ===== */
 .philosophy-item {
   display: flex;
@@ -990,8 +984,22 @@ git commit -m "Add hero section with kanji watermark, fade-rise animation, and s
   letter-spacing: 0.08em;
   margin-top: var(--space-1);
 }
+```
 
-/* ===== Sections (product) ===== */
+```css
+/* ===== Sections ===== */
+.philosophy__list {
+  display: flex;
+  justify-content: space-between;
+  list-style: none;
+  margin: 0;
+  padding: var(--space-6) var(--space-5);
+  border-top: 1px solid var(--color-sand);
+  border-bottom: 1px solid var(--color-divider);
+  overflow-x: auto;
+  gap: var(--space-4);
+}
+
 .product {
   padding: var(--space-8) var(--space-5);
 }
@@ -1047,10 +1055,22 @@ git commit -m "Add hero section with kanji watermark, fade-rise animation, and s
 .zone__label { color: var(--color-sand); font-size: 12px; display: block; }
 .zone__name { color: var(--color-clouds); font-family: var(--font-display); font-size: 20px; display: block; margin-top: var(--space-1); }
 
+@media (prefers-reduced-motion: reduce) {
+  .product__grid,
+  .zone {
+    transition: none;
+  }
+}
+
 @media (max-width: 768px) {
   .product__grid, .product__zones { grid-template-columns: 1fr; }
 }
 ```
+
+Note: `.product__grid` and `.zone` are neutralized under reduced motion
+(transition removed, so `is-visible` toggles their state instantly instead
+of animating) — per the global constraint that every transition must be
+neutralized, not just `animation`-based effects.
 
 - [ ] **Step 3: Implement `initRevealOnScroll` in `script.js`**
 
@@ -1125,6 +1145,36 @@ git commit -m "Add philosophy strip, Release 01 product section, and shared reve
 
 - [ ] **Step 2: Style both sections**
 
+Insert `.card*` under the EXISTING `Components` header, and `.features*`/
+`.for*` under the EXISTING `Sections` header — matching the file's existing
+header order (Components before Sections). Shown below in that order:
+
+```css
+/* ===== Components ===== */
+.card {
+  background: var(--color-card);
+  border: 1px solid var(--color-divider);
+  border-top: 2px solid var(--color-sand);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity var(--duration-fade) var(--ease-default) var(--delay, 0ms),
+              transform var(--duration-fade) var(--ease-default) var(--delay, 0ms);
+}
+
+.card.is-visible { opacity: 1; transform: translateY(0); }
+
+.card__icon { font-size: 28px; display: block; margin-bottom: var(--space-2); }
+.card__icon--kanji { font-family: var(--font-kanji); }
+.card h3 { font-size: 18px; margin-bottom: var(--space-1); }
+.card p { font-size: 14px; color: var(--color-moss-text); margin: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .card { transition: none; }
+}
+```
+
 ```css
 /* ===== Sections ===== */
 .features { padding: var(--space-8) var(--space-5); }
@@ -1160,26 +1210,6 @@ git commit -m "Add philosophy strip, Release 01 product section, and shared reve
 @media (max-width: 768px) {
   .features__grid, .for__personas { grid-template-columns: 1fr; }
 }
-
-/* ===== Components ===== */
-.card {
-  background: var(--color-card);
-  border: 1px solid var(--color-divider);
-  border-top: 2px solid var(--color-sand);
-  border-radius: var(--radius-md);
-  padding: var(--space-4);
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity var(--duration-fade) var(--ease-default) var(--delay, 0ms),
-              transform var(--duration-fade) var(--ease-default) var(--delay, 0ms);
-}
-
-.card.is-visible { opacity: 1; transform: translateY(0); }
-
-.card__icon { font-size: 28px; display: block; margin-bottom: var(--space-2); }
-.card__icon--kanji { font-family: var(--font-kanji); }
-.card h3 { font-size: 18px; margin-bottom: var(--space-1); }
-.card p { font-size: 14px; color: var(--color-moss-text); margin: 0; }
 ```
 
 - [ ] **Step 3: Update `initRevealOnScroll` selector to include `.card`**
@@ -1237,24 +1267,11 @@ git commit -m "Add features grid and who-it's-for persona section"
 
 - [ ] **Step 2: Style the glow layer and buy section**
 
+Insert `.buy*`/`.watermark--buy` under the EXISTING `Sections` header, and
+`.ambient-glow*` under the EXISTING `Motion` header — matching the file's
+existing header order (Sections before Motion). Shown below in that order:
+
 ```css
-/* ===== Motion ===== */
-.ambient-glow {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  background: radial-gradient(
-    circle at 50% var(--scroll-glow-y, 50%),
-    rgba(200, 186, 158, 0.06),
-    transparent 60%
-  );
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .ambient-glow { background: radial-gradient(circle at 50% 50%, rgba(200, 186, 158, 0.06), transparent 60%); }
-}
-
 /* ===== Sections ===== */
 .buy {
   position: relative;
@@ -1411,7 +1428,17 @@ git commit -m "Add buy section and scroll-driven ambient lighting effect"
 }
 
 .cursor-glow--active { display: block; }
+
+@media (prefers-reduced-motion: reduce) {
+  .cursor-glow { transition: none; }
+}
 ```
+
+Note: `.cursor-glow--active` is only ever added by `shouldEnableCustomCursor()`
+gating in `script.js` (already false under reduced motion), but per the
+global constraint every transition must also be neutralized in CSS,
+matching the pattern applied to `.nav`, `.product__grid`/`.zone`, and
+`.card` in earlier tasks.
 
 - [ ] **Step 3: Wire form validation and cursor follower in `script.js`**
 
