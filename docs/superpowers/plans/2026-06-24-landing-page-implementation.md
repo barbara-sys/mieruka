@@ -1552,7 +1552,7 @@ git commit -m "Add future email capture section and restrained custom cursor fol
 .footer__copyright {
   margin-top: var(--space-4);
   font-size: 12px;
-  color: var(--color-divider);
+  color: var(--color-moss-text);
 }
 ```
 
