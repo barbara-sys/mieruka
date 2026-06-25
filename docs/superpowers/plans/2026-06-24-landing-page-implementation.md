@@ -4,7 +4,7 @@
 
 **Goal:** Build the production-ready, single-page mieruka.studio site exactly as specified in `docs/superpowers/specs/2026-06-24-landing-page-design.md`: a calm, editorial, typography-led brand page that frames the $24 workbook as "Release 01" of a software company, not an Etsy storefront — with tested design tokens, a loading animation, scroll-driven ambient lighting, a restrained custom cursor, and a multi-page-ready CSS architecture.
 
-**Architecture:** Three static files — `index.html`, `styles.css`, `script.js` (loaded as an ES module) — plus `assets/`. All non-trivial logic (contrast-ratio math, throttling, email validation, feature-detection for the cursor) is extracted into small pure functions exported from `script.js` and unit-tested with Node's built-in test runner (`node --test`, no external dependencies). A minimal `package.json` (`{"name": "mieruka-studio", "private": true, "type": "module", "scripts": {"test": "node --test tests/"}}`) is required so Node resolves `script.js` as an ES module when the test files `import` from it — `.mjs` test-file extensions alone are not sufficient, since Node resolves the imported file's own module type independently. This `package.json` has no `build` script and no dependencies, so it does not trigger Vercel's build-detection or interfere with Netlify drag-and-drop deploy — both still serve the project as a static site. DOM wiring (scroll listeners, IntersectionObserver, cursor follower) lives in a `document`-gated block at the bottom of `script.js` and is verified manually in-browser per task, since there is no browser-test runner in scope.
+**Architecture:** Three static files — `index.html`, `styles.css`, `script.js` (loaded as an ES module) — plus `assets/`. All non-trivial logic (contrast-ratio math, throttling, email validation, feature-detection for the cursor) is extracted into small pure functions exported from `script.js` and unit-tested with Node's built-in test runner (`node --test`, no external dependencies). A minimal `package.json` (`{"name": "mieruka-studio", "private": true, "type": "module", "scripts": {"test": "node --test"}}`) is required so Node resolves `script.js` as an ES module when the test files `import` from it — `.mjs` test-file extensions alone are not sufficient, since Node resolves the imported file's own module type independently. This `package.json` has no `build` script and no dependencies, so it does not trigger Vercel's build-detection or interfere with Netlify drag-and-drop deploy — both still serve the project as a static site. DOM wiring (scroll listeners, IntersectionObserver, cursor follower) lives in a `document`-gated block at the bottom of `script.js` and is verified manually in-browser per task, since there is no browser-test runner in scope.
 
 **Tech Stack:** Vanilla HTML5, CSS3 (custom properties), vanilla JS (ES modules), Node.js built-in test runner (dev-only, not deployed), Google Fonts (Cormorant Garamond, Jost, Noto Serif JP).
 
@@ -209,7 +209,7 @@ file server (e.g. `npx serve .`).
 ## Running tests
 
 ```bash
-node --test tests/
+node --test
 ```
 
 Tests cover SEO/meta requirements and pure utility functions (contrast
@@ -1498,7 +1498,7 @@ git commit -m "Add future email capture section and restrained custom cursor fol
 
 - [ ] **Step 4: Run the full test suite**
 
-Run: `node --test tests/`
+Run: `node --test`
 Expected: PASS — all SEO and utility tests green (the `<h1>` count is still exactly one, since the footer/nav use `<span>`/`<p>`, not headings).
 
 - [ ] **Step 5: Full manual end-to-end pass**

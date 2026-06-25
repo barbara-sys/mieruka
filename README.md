@@ -18,7 +18,7 @@ file server (e.g. `npx serve .`).
 ## Running tests
 
 ```bash
-node --test tests/
+node --test
 ```
 
 Tests cover SEO/meta requirements and pure utility functions (contrast
