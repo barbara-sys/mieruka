@@ -121,4 +121,26 @@ if (typeof document !== 'undefined') {
     });
     window.addEventListener('scroll', updateGlow, { passive: true });
   }
+
+  const emailForm = document.querySelector('[data-email-form]');
+  const emailFeedback = document.querySelector('[data-email-feedback]');
+  if (emailForm && emailFeedback) {
+    emailForm.addEventListener('submit', (event) => {
+      const input = emailForm.querySelector('input[type="email"]');
+      if (!isValidEmail(input.value)) {
+        event.preventDefault();
+        emailFeedback.textContent = 'Please enter a valid email address.';
+        return;
+      }
+      emailFeedback.textContent = '';
+    });
+  }
+
+  const cursorGlow = document.querySelector('[data-cursor-glow]');
+  if (cursorGlow && shouldEnableCustomCursor()) {
+    cursorGlow.classList.add('cursor-glow--active');
+    window.addEventListener('mousemove', (event) => {
+      cursorGlow.style.transform = `translate(${event.clientX}px, ${event.clientY}px) translate(-50%, -50%)`;
+    });
+  }
 }
