@@ -1,4 +1,4 @@
-// ===== Pure utilities (unit-tested in tests/utils.test.mjs) =====
+// ===== Pure utilities =====
 
 function hexToRgb(hex) {
   const sanitized = hex.replace('#', '');
@@ -23,7 +23,7 @@ function relativeLuminance({ r, g, b }) {
   );
 }
 
-export function getContrastRatio(hex1, hex2) {
+function getContrastRatio(hex1, hex2) {
   const l1 = relativeLuminance(hexToRgb(hex1));
   const l2 = relativeLuminance(hexToRgb(hex2));
   const lighter = Math.max(l1, l2);
@@ -31,45 +31,41 @@ export function getContrastRatio(hex1, hex2) {
   return (lighter + 0.05) / (darker + 0.05);
 }
 
-export function prefersReducedMotion(matchMediaFn = (q) => window.matchMedia(q)) {
-  return matchMediaFn('(prefers-reduced-motion: reduce)').matches;
+function prefersReducedMotion() {
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 }
 
-export function clamp(value, min, max) {
+function clamp(value, min, max) {
   return Math.min(Math.max(value, min), max);
 }
 
-export function throttleRAF(fn, rafFn = (cb) => requestAnimationFrame(cb)) {
+function throttleRAF(fn) {
   let scheduled = false;
   let lastArgs = null;
   return (...args) => {
     lastArgs = args;
     if (scheduled) return;
     scheduled = true;
-    rafFn(() => {
+    requestAnimationFrame(() => {
       scheduled = false;
       fn(...lastArgs);
     });
   };
 }
 
-export function isValidEmail(value) {
+function isValidEmail(value) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 }
 
-export function getStaggerDelay(index, baseDelayMs = 80) {
-  return index * baseDelayMs;
-}
-
-export function shouldEnableCustomCursor(matchMediaFn = (q) => window.matchMedia(q)) {
-  const isFinePointer = matchMediaFn('(pointer: fine)').matches;
-  const isWideViewport = matchMediaFn('(min-width: 1024px)').matches;
-  const reducedMotion = matchMediaFn('(prefers-reduced-motion: reduce)').matches;
+function shouldEnableCustomCursor() {
+  const isFinePointer = window.matchMedia('(pointer: fine)').matches;
+  const isWideViewport = window.matchMedia('(min-width: 1024px)').matches;
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   return isFinePointer && isWideViewport && !reducedMotion;
 }
 
-export function initRevealOnScroll(root = document) {
-  const elements = root.querySelectorAll('[data-reveal], .zone, .card');
+function initRevealOnScroll() {
+  const elements = document.querySelectorAll('[data-reveal], .zone, .card');
   if (!('IntersectionObserver' in window) || elements.length === 0) {
     elements.forEach((el) => el.classList.add('is-visible'));
     return;
@@ -85,62 +81,78 @@ export function initRevealOnScroll(root = document) {
   elements.forEach((el) => observer.observe(el));
 }
 
-// ===== DOM wiring (manual verification only — see plan Task 4 Step 5) =====
-if (typeof document !== 'undefined') {
-  const nav = document.querySelector('[data-nav]');
-  if (nav) {
-    window.addEventListener('scroll', () => {
-      nav.classList.toggle('nav--solid', window.scrollY > 80);
-    }, { passive: true });
-  }
+// ===== DOM wiring =====
 
-  const loader = document.querySelector('[data-loader]');
-  if (loader) {
-    const dismissLoader = () => {
-      loader.classList.add('loader--hidden');
-      setTimeout(() => loader.remove(), 900); // matches --duration-fade (0.9s)
-    };
-    if (prefersReducedMotion()) {
-      dismissLoader();
-    } else {
-      window.addEventListener('load', () => setTimeout(dismissLoader, 900)); // matches --duration-fade (0.9s)
+const nav = document.querySelector('[data-nav]');
+if (nav) {
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('nav--solid', window.scrollY > 80);
+  }, { passive: true });
+}
+
+const loader = document.querySelector('[data-loader]');
+if (loader) {
+  const dismissLoader = () => {
+    loader.classList.add('loader--hidden');
+    setTimeout(() => loader.remove(), 900);
+  };
+  if (prefersReducedMotion()) {
+    dismissLoader();
+  } else {
+    window.addEventListener('load', () => setTimeout(dismissLoader, 900));
+  }
+}
+
+initRevealOnScroll();
+
+const glow = document.querySelector('[data-ambient-glow]');
+if (glow && !prefersReducedMotion()) {
+  const updateGlow = throttleRAF(() => {
+    const scrollFraction = clamp(
+      window.scrollY / (document.documentElement.scrollHeight - window.innerHeight),
+      0,
+      1
+    );
+    glow.style.setProperty('--scroll-glow-y', `${scrollFraction * 100}%`);
+  });
+  window.addEventListener('scroll', updateGlow, { passive: true });
+}
+
+const emailForm = document.querySelector('[data-email-form]');
+const emailFeedback = document.querySelector('[data-email-feedback]');
+if (emailForm && emailFeedback) {
+  emailForm.addEventListener('submit', (event) => {
+    const input = emailForm.querySelector('input[type="email"]');
+    if (!isValidEmail(input.value)) {
+      event.preventDefault();
+      emailFeedback.textContent = 'Please enter a valid email address.';
+      return;
     }
-  }
+    emailFeedback.textContent = '';
+  });
+}
 
-  initRevealOnScroll();
+const previewTrack = document.querySelector('[data-preview-track]');
+const previewDots = document.querySelectorAll('[data-preview-dots] .preview__dot');
+if (previewTrack && previewDots.length) {
+  const updateDots = throttleRAF(() => {
+    const slide = previewTrack.querySelector('.preview__slide');
+    const slideWidth = slide ? slide.offsetWidth + 24 : 1;
+    const index = Math.min(Math.round(previewTrack.scrollLeft / slideWidth), previewDots.length - 1);
+    previewDots.forEach((dot, i) => dot.classList.toggle('preview__dot--active', i === index));
+  });
+  previewTrack.addEventListener('scroll', updateDots, { passive: true });
 
-  const glow = document.querySelector('[data-ambient-glow]');
-  if (glow && !prefersReducedMotion()) {
-    const updateGlow = throttleRAF(() => {
-      const scrollFraction = clamp(
-        window.scrollY / (document.documentElement.scrollHeight - window.innerHeight),
-        0,
-        1
-      );
-      glow.style.setProperty('--scroll-glow-y', `${scrollFraction * 100}%`);
-    });
-    window.addEventListener('scroll', updateGlow, { passive: true });
-  }
+  let isDragging = false, startX = 0, startScroll = 0;
+  previewTrack.addEventListener('mousedown', (e) => { isDragging = true; startX = e.pageX; startScroll = previewTrack.scrollLeft; });
+  window.addEventListener('mousemove', (e) => { if (!isDragging) return; previewTrack.scrollLeft = startScroll - (e.pageX - startX); });
+  window.addEventListener('mouseup', () => { isDragging = false; });
+}
 
-  const emailForm = document.querySelector('[data-email-form]');
-  const emailFeedback = document.querySelector('[data-email-feedback]');
-  if (emailForm && emailFeedback) {
-    emailForm.addEventListener('submit', (event) => {
-      const input = emailForm.querySelector('input[type="email"]');
-      if (!isValidEmail(input.value)) {
-        event.preventDefault();
-        emailFeedback.textContent = 'Please enter a valid email address.';
-        return;
-      }
-      emailFeedback.textContent = '';
-    });
-  }
-
-  const cursorGlow = document.querySelector('[data-cursor-glow]');
-  if (cursorGlow && shouldEnableCustomCursor()) {
-    cursorGlow.classList.add('cursor-glow--active');
-    window.addEventListener('mousemove', (event) => {
-      cursorGlow.style.transform = `translate(${event.clientX}px, ${event.clientY}px) translate(-50%, -50%)`;
-    });
-  }
+const cursorGlow = document.querySelector('[data-cursor-glow]');
+if (cursorGlow && shouldEnableCustomCursor()) {
+  cursorGlow.classList.add('cursor-glow--active');
+  window.addEventListener('mousemove', (event) => {
+    cursorGlow.style.transform = `translate(${event.clientX}px, ${event.clientY}px) translate(-50%, -50%)`;
+  });
 }
